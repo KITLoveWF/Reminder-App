@@ -17,10 +17,10 @@ class TaskViewModel(application: Application): AndroidViewModel(application) {
     private  val _tasks : LiveData<List<Task>>
     private  val _taskRepository : TaskRepository
     init {
-        //loadImage()
+
         val taskDao = TaskDatabase.getDatabase(application).taskDAO()
         _taskRepository = TaskRepository(taskDao)
-        _tasks = _taskRepository.images
+        _tasks = _taskRepository.tasks
 
     }
     fun addTask(task: Task)

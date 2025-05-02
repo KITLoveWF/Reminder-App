@@ -33,7 +33,7 @@ import com.example.remiderapp.Model.Task
 
 @Composable
 //@Preview(showBackground = true)
-fun TaskItem(dayText: Int,listTask: MutableList<Task>?,dayNow:Boolean ) {
+fun TaskItem(dayText: Int,listTask: MutableList<Task>?,dayNow:Boolean) {
 //    dayText: Int,listTask: MutableList<Task>?,dayNow:Boolean
 //    val listTask = mutableListOf(
 //        // Ngày 1: 2025-04-23
@@ -105,7 +105,7 @@ fun TaskItem(dayText: Int,listTask: MutableList<Task>?,dayNow:Boolean ) {
 //
 //                            }
                             Text(
-                                text = task.name,
+                                text = task.title,
                                 fontSize = 5.sp,
                                 color = Color.White,
                             )
@@ -143,7 +143,7 @@ fun TaskItem(dayText: Int,listTask: MutableList<Task>?,dayNow:Boolean ) {
                                    verticalAlignment = Alignment.CenterVertically)
                                {
                                    Text(
-                                       text = task.name,
+                                       text = task.title,
                                        fontSize = 5.sp,
                                        color = Color.White,
 

@@ -1,11 +1,9 @@
 package com.example.remiderapp
 
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -35,62 +33,69 @@ fun CalendarScreen(
     onPreviousClick: () -> Unit = {},
     onNextClick: () -> Unit = {}
 ) {
-    Column(modifier = Modifier.fillMaxSize().padding(vertical = 20.dp)) {
-
-        // Month navigation
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Button(
-                onClick = onPreviousClick,
-                modifier = Modifier.weight(1f),
-                colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent),
-                contentPadding = PaddingValues()
+    Column(modifier = Modifier.fillMaxSize()) {
+        Column(modifier = Modifier.fillMaxWidth().weight(13f)) {
+            // Month navigation
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically
             ) {
-                Text("<-", color = Color.Black, fontSize = 20.sp, fontWeight = FontWeight.Bold)
-            }
-
-            Text(
-                text = monthText,
-                modifier = Modifier.weight(2f),
-                fontSize = 20.sp,
-                fontWeight = FontWeight.Bold,
-                color = Color.Black,
-                textAlign = TextAlign.Center
-            )
-
-            Button(
-                onClick = onNextClick,
-                modifier = Modifier.weight(1f),
-                colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent),
-                contentPadding = PaddingValues()
-            ) {
-                Text("->", color = Color.Black, fontSize = 20.sp, fontWeight = FontWeight.Bold)
-            }
-        }
-
-        Spacer(modifier = Modifier.height(10.dp))
-
-        // Day headers
-        val daysOfWeek = listOf("Sun", "Mon", "Tue", "Wed", "Thur", "Fri", "Sat")
-        Row(modifier = Modifier.fillMaxWidth()) {
-            daysOfWeek.forEach { day ->
-                Text(
-                    text = day,
+                Button(
+                    onClick = onPreviousClick,
                     modifier = Modifier.weight(1f),
-                    textAlign = TextAlign.Center,
-                    fontSize = 16.sp,
-                    color = Color.Gray,
-                    fontWeight = FontWeight.Bold
+                    colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent),
+                    contentPadding = PaddingValues()
+                ) {
+                    Text("<-", color = Color.Black, fontSize = 20.sp, fontWeight = FontWeight.Bold)
+                }
+
+                Text(
+                    text = monthText,
+                    modifier = Modifier.weight(2f),
+                    fontSize = 20.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = Color.Black,
+                    textAlign = TextAlign.Center
                 )
+
+                Button(
+                    onClick = onNextClick,
+                    modifier = Modifier.weight(1f),
+                    colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent),
+                    contentPadding = PaddingValues()
+                ) {
+                    Text("->", color = Color.Black, fontSize = 20.sp, fontWeight = FontWeight.Bold)
+                }
             }
+
+            Spacer(modifier = Modifier.height(10.dp))
+
+            // Day headers
+            val daysOfWeek = listOf("Sun", "Mon", "Tue", "Wed", "Thur", "Fri", "Sat")
+            Row(modifier = Modifier.fillMaxWidth()) {
+                daysOfWeek.forEach { day ->
+                    Text(
+                        text = day,
+                        modifier = Modifier.weight(1f),
+                        textAlign = TextAlign.Center,
+                        fontSize = 16.sp,
+                        color = Color.Gray,
+                        fontWeight = FontWeight.Bold
+                    )
+                }
+            }
+
+            Spacer(modifier = Modifier.height(10.dp))
+
+            // RecyclerView replacement (LazyVerticalGrid, LazyColumn, etc.)
+            CalendarGrid(month = 4, year = 2025)
+
+        }
+        Column(modifier = Modifier.fillMaxWidth().weight(1f)) {
+            Footer()
+
         }
 
-        Spacer(modifier = Modifier.height(10.dp))
-
-        // RecyclerView replacement (LazyVerticalGrid, LazyColumn, etc.)
-        CalendarGrid(month = 4, year = 2025)
     }
 }
 
@@ -114,11 +119,11 @@ fun CalendarGrid(month: Int, year: Int) {
 //        Task(name = "Xem phim", content = "Xem phim tài liệu lịch sử", time = "21:00", day = "2025-04-24"),
 
         // Ngày 3: 2025-04-25
-        Task(name = "Dọn dẹp phòng", content = "Sắp xếp sách vở", time = "08:00", day = "2025-04-25"),
-        Task(name = "Làm đồ án", content = "Phân tích yêu cầu đề tài", time = "11:00", day = "2025-04-25"),
-        Task(name = "Đi cà phê", content = "Gặp bạn bè thư giãn", time = "13:00", day = "2025-04-25"),
-        Task(name = "Tham gia workshop", content = "Chủ đề UI/UX", time = "15:00", day = "2025-04-25"),
-        Task(name = "Tự học", content = "Xem tutorial về Kotlin", time = "19:00", day = "2025-04-25")
+        Task(title = "Dọn dẹp phòng", content = "Sắp xếp sách vở", time = "08:00", day = "2025-04-25"),
+        Task(title = "Làm đồ án", content = "Phân tích yêu cầu đề tài", time = "11:00", day = "2025-04-25"),
+        Task(title = "Đi cà phê", content = "Gặp bạn bè thư giãn", time = "13:00", day = "2025-04-25"),
+        Task(title = "Tham gia workshop", content = "Chủ đề UI/UX", time = "15:00", day = "2025-04-25"),
+        Task(title = "Tự học", content = "Xem tutorial về Kotlin", time = "19:00", day = "2025-04-25")
     )
 
 

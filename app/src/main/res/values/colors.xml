@@ -12,4 +12,5 @@
     <color name="blue">#0000FF</color>
     <color name="orange">#ff8533</color>
     <color name="grayLight">#e6e6e6</color>
+    <color name="blueLight">#73e6FF</color>
 </resources>

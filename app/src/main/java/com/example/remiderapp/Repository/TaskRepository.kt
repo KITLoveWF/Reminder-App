@@ -6,7 +6,7 @@ import com.example.remiderapp.DAO.TaskDAO
 import com.example.remiderapp.Model.Task
 
 class TaskRepository(private val taskDAO: TaskDAO) {
-    val images : LiveData<List<Task>> = taskDAO.getAllTask()
+    val tasks : LiveData<List<Task>> = taskDAO.getAllTask()
     suspend fun addTask(task:Task)
     {
         Log.d("Test2","image:${task}")

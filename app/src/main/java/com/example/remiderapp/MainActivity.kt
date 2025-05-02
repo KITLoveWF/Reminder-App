@@ -11,7 +11,11 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
 import com.example.remiderapp.ui.theme.RemiderAppTheme
+import org.intellij.lang.annotations.JdkConstants.CalendarMonth
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -19,29 +23,43 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             RemiderAppTheme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    Greeting(
-                        name = "Android",
-                        modifier = Modifier.padding(innerPadding)
-                    )
-                }
+                App()
             }
         }
     }
 }
 
-@Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
-}
+//@Composable
+//fun Greeting(name: String, modifier: Modifier = Modifier) {
+//    Text(
+//        text = "Hello $name!",
+//        modifier = modifier
+//    )
+//}
+//
+//@Preview(showBackground = true)
+//@Composable
+//fun GreetingPreview() {
+//    RemiderAppTheme {
+//        Greeting("Android")
+//    }
+//}
 
-@Preview(showBackground = true)
 @Composable
-fun GreetingPreview() {
-    RemiderAppTheme {
-        Greeting("Android")
+fun App()
+{
+    val navController = rememberNavController()
+    NavHost(navController = navController, startDestination = "page1")
+    {
+        composable("page1") {
+            //ListTask(navController)
+        }
+        composable("page2") {
+            //CalendarScreen(navController)
+        }
+        composable("page3")
+        {
+
+        }
     }
 }

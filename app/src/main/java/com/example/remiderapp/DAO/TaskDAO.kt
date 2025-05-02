@@ -24,7 +24,7 @@ interface TaskDAO {
     @Delete
     suspend fun deleteTask(task:Task)
 
-    @Query("SELECT * FROM Task WHERE name = :name")
+    @Query("SELECT * FROM Task WHERE title = :name")
     suspend fun findTaskName(name:String) : Task?
 
     @Query("SELECT * FROM Task WHERE id = :id")

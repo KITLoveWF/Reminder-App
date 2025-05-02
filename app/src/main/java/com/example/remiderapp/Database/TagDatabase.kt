@@ -4,17 +4,19 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
+import com.example.remiderapp.DAO.TagDAO
 import com.example.remiderapp.DAO.TaskDAO
+import com.example.remiderapp.Model.Tag
 import com.example.remiderapp.Model.Task
 
-@Database(entities = [Task::class], version = 2)
-abstract class TaskDatabase : RoomDatabase() {
-    abstract  fun taskDAO (): TaskDAO
+@Database(entities = [Tag::class], version = 2)
+abstract class TagDatabase : RoomDatabase()  {
+    abstract  fun tagDAO (): TagDAO
     companion object {
         @Volatile
-        private var INSTANCE: TaskDatabase? = null
+        private var INSTANCE: TagDatabase? = null
 
-        fun getDatabase(context: Context): TaskDatabase {
+        fun getDatabase(context: Context): TagDatabase {
             val temInstance = INSTANCE
             if(temInstance!=null)
             {
@@ -23,7 +25,7 @@ abstract class TaskDatabase : RoomDatabase() {
             synchronized(this){
                 val instance = Room.databaseBuilder(
                     context.applicationContext,
-                    TaskDatabase::class.java,
+                    TagDatabase::class.java,
                     "Reminder_database"
                 ).build()
                 INSTANCE = instance

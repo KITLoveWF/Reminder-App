@@ -6,8 +6,13 @@ import androidx.room.PrimaryKey
 @Entity(tableName = "Task")
 data class Task(
     @PrimaryKey(autoGenerate = true) val id: Int = 0,
-    val name: String,
+    val title: String,
     val content: String,
     val time: String,
-    val day: String
+    val day: String,
+//    val priority: Int,
+//    val reminder: Boolean,
+//    val dateRecurrence: Boolean,
+//    val weekRecurrence: Boolean
+//    val complete: Boolean,
 )
