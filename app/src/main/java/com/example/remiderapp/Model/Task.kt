@@ -10,9 +10,8 @@ data class Task(
     val content: String,
     val time: String,
     val day: String,
-//    val priority: Int,
-//    val reminder: Boolean,
-//    val dateRecurrence: Boolean,
-//    val weekRecurrence: Boolean
-//    val complete: Boolean,
+    val reminder:Boolean,
+    val priority: Int? = null,
+    val complete: Boolean,
+    val categoryId:Int? = null
 )

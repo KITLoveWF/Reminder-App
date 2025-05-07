@@ -2,6 +2,7 @@ package com.example.remiderapp
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -20,11 +21,15 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.Modifier
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -33,7 +38,7 @@ import com.example.remiderapp.Model.Task
 
 @Composable
 //@Preview(showBackground = true)
-fun TaskItem(dayText: Int,listTask: MutableList<Task>?,dayNow:Boolean) {
+fun TaskItem(dayText: Int,listTask: List<Task>?,dayNow:Boolean) {
 //    dayText: Int,listTask: MutableList<Task>?,dayNow:Boolean
 //    val listTask = mutableListOf(
 //        // Ngày 1: 2025-04-23
@@ -55,6 +60,7 @@ fun TaskItem(dayText: Int,listTask: MutableList<Task>?,dayNow:Boolean) {
         Color(0xFFFF4D4D), // red
         Color(0xFFFF8533)  // orange
     )
+    var showDialog by remember { mutableStateOf(false) }
 
 
 
@@ -62,32 +68,23 @@ fun TaskItem(dayText: Int,listTask: MutableList<Task>?,dayNow:Boolean) {
         List(3) { colorList.random() }
     }
     Box(modifier = Modifier.fillMaxWidth()
-        .size(120.dp)
+        .size(105.dp)
         .padding(2.dp)
         .clip(RoundedCornerShape(10.dp))
         .background(Color.White)
+        .clickable {
+            showDialog = true
+        }
     ) {
 
-        // Calendar icon (top right with margin)
-//        Image(
-//            painter = painterResource(id = R.drawable.calendar),
-//            contentDescription = "Calendar Icon",
-//            modifier = Modifier
-//                .size(48.dp)
-//                .padding(top = 50.dp, end = 50.dp),
-//            alignment = Alignment.TopEnd,
-//
-//            contentScale = ContentScale.Fit
-//        )
-        // Task Name - center
         if(listTask!=null)
         {
-            var i = 10
+            var i = 20
             for ((index,task) in listTask.withIndex())
             {
                 if(index<2)
                 {
-                    i+=30
+                    i+=20
                     Box(modifier = Modifier.fillMaxWidth() .padding(top = i.dp).clip(RoundedCornerShape(10.dp))) {
                         Row(
                             modifier = Modifier
@@ -100,19 +97,21 @@ fun TaskItem(dayText: Int,listTask: MutableList<Task>?,dayNow:Boolean) {
 
                         )
                         {
-//                            Column(modifier = Modifier.weight(1f).padding(start = 5.dp)) {
-//
-//
-//                            }
+                            val displayTitle = if (task.title.length > 5) {
+                                task.title.take(5) + "..."
+                            } else {
+                                task.title
+                            }
+
                             Text(
-                                text = task.title,
-                                fontSize = 5.sp,
+                                text = displayTitle,
+                                fontSize = 10.sp,
                                 color = Color.White,
                             )
 
                             Text(
                                 text = task.time,
-                                fontSize = 5.sp,
+                                fontSize = 6.sp,
                                 color = Color.White,
 
                             )
@@ -124,7 +123,7 @@ fun TaskItem(dayText: Int,listTask: MutableList<Task>?,dayNow:Boolean) {
                 }
                 else if(index==2)
                 {
-                    i+=30
+                    i+=20
                    Box(modifier = Modifier.fillMaxWidth() .padding(top = i.dp).clip(RoundedCornerShape(10.dp)))
                    {
                        Row(
@@ -142,15 +141,20 @@ fun TaskItem(dayText: Int,listTask: MutableList<Task>?,dayNow:Boolean) {
                                Row(modifier = Modifier.fillMaxWidth() ,horizontalArrangement = Arrangement.SpaceBetween,
                                    verticalAlignment = Alignment.CenterVertically)
                                {
+                                   val displayTitle = if (task.title.length > 5) {
+                                       task.title.take(5) + "..."
+                                   } else {
+                                       task.title
+                                   }
                                    Text(
-                                       text = task.title,
-                                       fontSize = 5.sp,
+                                       text = displayTitle,
+                                       fontSize = 10.sp,
                                        color = Color.White,
 
                                        )
                                    Text(
                                        text = task.time,
-                                       fontSize = 5.sp,
+                                       fontSize = 6.sp,
                                        color = Color.White,
 
                                        )
@@ -168,7 +172,7 @@ fun TaskItem(dayText: Int,listTask: MutableList<Task>?,dayNow:Boolean) {
                            {
                                Text(
                                    text = "+1",
-                                   fontSize = 5.sp,
+                                   fontSize = 10.sp,
                                    color = Color.Gray,
                                )
                            }
@@ -206,10 +210,17 @@ fun TaskItem(dayText: Int,listTask: MutableList<Task>?,dayNow:Boolean) {
                 fontSize = 14.sp
             )
         }
-
-
-
+    }
+    if(showDialog)
+    {
+        listTask?.let {
+            TaskDate(listTask, onDismiss = {
+                showDialog = false
+            })
+        }
 
     }
+
+
 
 }

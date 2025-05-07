@@ -29,8 +29,12 @@ interface TaskDAO {
 
     @Query("SELECT * FROM Task WHERE id = :id")
     suspend fun findTaskID(id:Int) : Task?
+
     @Query("SELECT * FROM Task WHERE day = :day")
-    suspend fun findTaskDay(day:String) : Task?
+    suspend fun findTaskDay(day:String) : List<Task>
+
+    @Query("SELECT * FROM Task WHERE categoryId = :categoryId")
+    suspend fun findTaskByCategory(categoryId:Int) : Task?
 
 //    @Query("SELECT * FROM Image WHERE uri = :url")
 //    suspend fun findImage(url:String) : Image?

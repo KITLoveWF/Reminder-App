@@ -8,7 +8,6 @@ import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Update
 import com.example.remiderapp.Model.Category
-import com.example.remiderapp.Model.Tag
 
 @Dao
 interface CategoryDAO {

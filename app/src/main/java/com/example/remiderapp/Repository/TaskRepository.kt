@@ -28,9 +28,13 @@ class TaskRepository(private val taskDAO: TaskDAO) {
     {
         return taskDAO.findTaskID(id)
     }
-    suspend fun findTaskDay(day:String):Task?
+    suspend fun findTaskDay(day:String):List<Task>
     {
         return taskDAO.findTaskDay(day)
+    }
+    suspend fun  findTaskByCategory(categoryId:Int):Task?
+    {
+        return taskDAO.findTaskByCategory(categoryId)
     }
 //    suspend fun  findImage(uri : String): Task?
 //    {
