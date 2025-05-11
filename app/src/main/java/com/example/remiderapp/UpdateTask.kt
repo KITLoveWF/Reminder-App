@@ -162,6 +162,14 @@ fun UpdateTask(navController: NavController,taskId: Int?)
 
 
 
+    var day by remember{mutableStateOf(0)}
+    var month by remember{mutableStateOf(0)}
+    var year by remember { mutableStateOf(0) }
+    var hour by remember { mutableStateOf(0) }
+    var minute by remember { mutableStateOf(0) }
+
+
+
 
 
 
@@ -269,7 +277,7 @@ fun UpdateTask(navController: NavController,taskId: Int?)
                             content = content,
                             time = timeTask,
                             day = dateTask,
-                            reminder = cancelTime,
+                            reminder = reminder,
                             priority = priority,
                             complete = TASK.complete,
                             categoryId = selectedCategory
@@ -277,6 +285,14 @@ fun UpdateTask(navController: NavController,taskId: Int?)
                         //Log.d("xin chào", "id=${it.id}, title=${title}, content=${it.content}, time=${it.time}, day=${it.day}, reminder=${it.reminder}, priority=${it.priority}, complete=${it.complete}, categoryId=${it.categoryId}")
 
                         taskViewModel.updateTask(updated)
+                        if(reminder)
+                        {
+                            setTime(context = context,year,month,day,hour,minute,title,content,TASK.id)
+                        }
+                        else
+                        {
+                            cancelNotification(context,TASK.id)
+                        }
                     }
 
                     navController.navigate("page1")
@@ -394,9 +410,14 @@ fun UpdateTask(navController: NavController,taskId: Int?)
             InputValue(
                 showDialog = isOpenSetTime,
                 onConfirm = {
-                        date,time ->
+                        date,time,Day,Month,Year,Hour,Minute ->
                     dateTask = date
                     timeTask = time
+                    day = Day
+                    month = Month
+                    year = Year
+                    hour = Hour
+                    minute = Minute
                 },
                 onDismiss = {
                     isOpenSetTime = false

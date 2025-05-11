@@ -106,7 +106,52 @@ fun CreateTask(navController: NavController)
 
 
 
+
+
+
+    var day by remember{mutableStateOf(0)}
+    var month by remember{mutableStateOf(0)}
+    var year by remember { mutableStateOf(0) }
+    var hour by remember { mutableStateOf(0) }
+    var minute by remember { mutableStateOf(0) }
+
+
+
     val context = LocalContext.current
+
+    val  _tasks by taskViewModel.getTask().observeAsState(emptyList())
+    var taskAdded by remember { mutableStateOf(false) }
+    //var tasks by remember { mutableStateOf(_tasks) }
+//    var tasks by remember { mutableStateOf<List<Task>>(emptyList()) }
+    var i by remember { mutableStateOf(0) }
+    var taskNew by remember { mutableStateOf<Task?>(null) }
+    var id by remember { mutableStateOf(-1) }
+    LaunchedEffect(_tasks) {
+        //Log.d("TaskLog", "Đã cập nhật: ${_tasks} task${++i}")
+        if(taskAdded)
+        {
+            taskNew = taskViewModel.findTaskName(title)
+
+            taskNew?.let {
+                id = it.id
+            }
+            //Log.d("loo","$taskNew,task${++i}")
+            if(cancelTime)
+            {
+                setTime(context = context,year,month,day,hour,minute,title,content,id)
+            }
+            else
+            {
+                cancelNotification(context,id)
+            }
+
+        }
+//        if (taskAdded) {
+//            tasks = _tasks
+//            taskAdded = false
+//        }
+        //tasks = _tasks
+    }
 
     Scaffold(topBar = {
         TopAppBar(
@@ -210,6 +255,30 @@ fun CreateTask(navController: NavController)
                         {
                             val task = Task(0,title,content,timeTask,dateTask,cancelTime,priority,false,selectedCategory)
                             taskViewModel.addTask(task)
+                            //val _tasks = taskViewModel.getTask().observeAsState(emptyList())
+                            //val tasks = _tasks.value
+                            taskAdded = true
+//                            if(tasks.isNotEmpty())
+//                            {
+//                                Log.d("llllkkpp","$tasks")
+//
+//                            }
+//                            else
+//                            {
+//                                Log.d("rỗng","cc")
+//                            }
+
+                            //Log.d("Timekkkk", "year=$year, month=$month, day=$day, hour=$hour, minute=$minute, title=$title, content=$content,cancle=$cancelTime")
+//                            if(cancelTime)
+//                            {
+//                                setTime(context = context,year,month,day,hour,minute,title,content)
+//                            }
+//                            else
+//                            {
+//                                cancelNotification(context)
+//                            }
+
+
                         }
 
                     }
@@ -223,11 +292,33 @@ fun CreateTask(navController: NavController)
                         {
                             val task = Task(0,title,content,timeTask,dateTask,cancelTime,priority,false)
                             taskViewModel.addTask(task)
+                            //val _tasks = taskViewModel.getTask().observeAsState(emptyList())
+                            //val tasks = _tasks.value
+                           taskAdded = true
+//                            if(tasks.isNotEmpty())
+//                            {
+//                                Log.d("llllkkpp","$tasks")
+//
+//                            }
+//                            else
+//                            {
+//                                Log.d("rỗng","cc")
+//                            }
+                            //Log.d("Timekkkk", "year=$year, month=$month, day=$day, hour=$hour, minute=$minute, title=$title, content=$content,cancle=$cancelTime")
+//                            if(cancelTime)
+//                            {
+//                                setTime(context = context,year,month,day,hour,minute,title,content)
+//                            }
+//                            else
+//                            {
+//                                cancelNotification(context)
+//                            }
+
                         }
 
                     }
                     Log.d("TaskDate",dateTask)
-                    navController.navigate("page1")
+                    //navController.navigate("page1")
                     // lưu
                 }) {
                     Icon(Icons.Default.Check, contentDescription = "Tạo nhiệm vụ", tint = Color.White)
@@ -346,9 +437,14 @@ fun CreateTask(navController: NavController)
             InputValue(
                 showDialog = isOpenSetTime,
                 onConfirm = {
-                        date,time ->
+                        date,time,Day,Month,Year,Hour,Minute ->
                     dateTask = date
                     timeTask = time
+                    day = Day
+                    month = Month
+                    year = Year
+                    hour = Hour
+                    minute = Minute
                 },
                 onDismiss = {
                     isOpenSetTime = false
@@ -370,7 +466,7 @@ fun CreateTask(navController: NavController)
 fun InputValue(
     showDialog: Boolean,
     onDismiss: () -> Unit,
-    onConfirm: (String,String) -> Unit,
+    onConfirm: (String,String,Int,Int,Int,Int,Int) -> Unit,
     title: String,
     content:String,
     cancelTime: Boolean,
@@ -407,6 +503,15 @@ fun InputValue(
 
 
     Log.d("cancel","${cancelTime}")
+    var editSwitch by remember { mutableStateOf(false) }
+    var cancelTimeInTask by remember { mutableStateOf(cancelTime) }
+
+    if(cancelTime)
+    {
+        editSwitch = true
+    }
+
+
 
 
     if(showDialog)
@@ -445,14 +550,19 @@ fun InputValue(
                         Text("Set time",fontSize = 20.sp )
                     }
                     Spacer(modifier = Modifier.height(20.dp))
-                    Switch(
+                    if(editSwitch)
+                    {
+                        Switch(
                             checked = cancelTime,
-                            onCheckedChange = { onCancelTimeChange(it) },
+                            onCheckedChange = {onCancelTimeChange(!cancelTime); cancelTimeInTask = !cancelTime },
                             colors = SwitchDefaults.colors(
                                 checkedThumbColor = Color.White,
                                 checkedTrackColor = Color.Blue
                             )
                         )
+
+                    }
+
                     //TimePicker(state = timePickerState)
 
 
@@ -463,20 +573,23 @@ fun InputValue(
                 TextButton(
                     onClick = {
 
-                       Log.d("Time", "year=$year, month=$month, day=$day, hour=$hour, minute=$minute, title=$title, content=$content")
 
-                        if(!cancelTime)
+                        if(!editSwitch)
                         {
-                            setTime(context = context,year,month,day,hour,minute,title,content)
+                            cancelTimeInTask = true
                             onCancelTimeChange(true)
                         }
-                        else
-                        {
-                            cancelNotification(context)
-                            onCancelTimeChange(false)
-                        }
+//                        Log.d("Time", "year=$year, month=$month, day=$day, hour=$hour, minute=$minute, title=$title, content=$content,cancle=$cancelTime")
+//                        if(cancelTimeInTask)
+//                        {
+//                            setTime(context = context,year,month,day,hour,minute,title,content)
+//                        }
+//                        else
+//                        {
+//                            cancelNotification(context)
+//                        }
                         // setTime(context,timePickerState.hour,timePickerState.minute,"Wake up for class!")
-                        onConfirm(dateTask,timeTask)
+                        onConfirm(dateTask,timeTask,day,month,year,hour,minute)
                         onDismiss()
                     }
                 ) {
@@ -638,7 +751,7 @@ fun showTime(timePickerState: TimePickerState,
 }
 
 
-fun setTime(context: Context, year: Int, month: Int, day: Int, hour: Int, minute: Int,title:String, content: String)
+fun setTime(context: Context, year: Int, month: Int, day: Int, hour: Int, minute: Int,title:String, content: String,requestCode: Int)
 {
     //Log.d("Timekkk", "year=$year, month=$month, day=$day, hour=$hour, minute=$minute, title=$title, content=$content")
 
@@ -652,10 +765,10 @@ fun setTime(context: Context, year: Int, month: Int, day: Int, hour: Int, minute
         set(Calendar.MILLISECOND, 0)
     }
 
-    scheduleNotification(context,calendar,title,content)
+    scheduleNotification(context,calendar,title,content,requestCode)
 
 }
-fun scheduleNotification(context: Context?,calendar: Calendar,title:String,content:String)
+fun scheduleNotification(context: Context?,calendar: Calendar,title:String,content:String,requestCode: Int)
 {
     //Log.d("Timekkk", "year=$, month=$month, day=$day, hour=$hour, minute=$minute, title=$title, content=$content")
 //    val logText = "Year=${calendar.get(Calendar.YEAR)}, " +
@@ -673,7 +786,7 @@ fun scheduleNotification(context: Context?,calendar: Calendar,title:String,conte
 
     val pendingIntent = PendingIntent.getBroadcast(
         context,
-        1,
+        requestCode,
         intent,
         PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
     )
@@ -688,6 +801,7 @@ fun scheduleNotification(context: Context?,calendar: Calendar,title:String,conte
         )
     }
     Toast.makeText(context, "Alarm set for ${calendar.time}", Toast.LENGTH_SHORT).show()
+    //Toast.makeText(context, "requestCode ${requestCode}", Toast.LENGTH_SHORT).show()
 }
 
 fun createNotificationChannel(context: Context?)
@@ -707,13 +821,13 @@ fun createNotificationChannel(context: Context?)
         }
     }
 }
-fun cancelNotification(context: Context)
+fun cancelNotification(context: Context,requestCode: Int)
 {
     val intent = Intent(context, Notification::class.java)
 
     val pendingIntent = PendingIntent.getBroadcast(
         context,
-        1, // phải giống requestCode lúc đặt
+        requestCode, // phải giống requestCode lúc đặt
         intent,
         PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
     )
