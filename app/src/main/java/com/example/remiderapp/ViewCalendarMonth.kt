@@ -2,6 +2,7 @@ package com.example.remiderapp
 
 import android.icu.util.Calendar
 import android.util.Log
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -10,10 +11,12 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -25,6 +28,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -105,25 +109,43 @@ fun CalendarScreen(
                     modifier = Modifier.fillMaxWidth(),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Button(
-                        onClick = {
-                            if(month>1)
-                            {
-                                month = month - 1
-                            }
-                            else if(month == 1)
-                            {
-                                month = 12
-                                year = year - 1
-                            }
-                            Log.d("time","month:${month},year:${year}")
-
-                        },
-                        modifier = Modifier.weight(1f),
-                        colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent),
-                        contentPadding = PaddingValues()
-                    ) {
-                        Text("<-", color = Color.Black, fontSize = 20.sp, fontWeight = FontWeight.Bold)
+//                    Button(
+//                        onClick = {
+//                            if(month>1)
+//                            {
+//                                month = month - 1
+//                            }
+//                            else if(month == 1)
+//                            {
+//                                month = 12
+//                                year = year - 1
+//                            }
+//                            Log.d("time","month:${month},year:${year}")
+//
+//                        },
+//                        modifier = Modifier.weight(1f),
+//                        colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent),
+//                        contentPadding = PaddingValues()
+//                    ) {
+//                        Text("<-", color = Color.Black, fontSize = 20.sp, fontWeight = FontWeight.Bold)
+//                    }
+                    IconButton(onClick = {
+                        if(month>1)
+                        {
+                            month = month - 1
+                        }
+                        else if(month == 1)
+                        {
+                            month = 12
+                            year = year - 1
+                        }
+                    },
+                        modifier = Modifier.weight(1f)) {
+                        Image(
+                            painter = painterResource(id = R.drawable.arrowleft),
+                            contentDescription = "Arrow Left",
+                            modifier = Modifier.size(24.dp)
+                        )
                     }
 
                     Text(
@@ -135,24 +157,43 @@ fun CalendarScreen(
                         textAlign = TextAlign.Center
                     )
 
-                    Button(
-                        onClick = {
-                            if(month<12)
-                            {
-                                month = month + 1
-                            }
-                            else if(month == 12)
-                            {
-                                month = 1
-                                year = year + 1
-                            }
+//                    Button(
+//                        onClick = {
+//                            if(month<12)
+//                            {
+//                                month = month + 1
+//                            }
+//                            else if(month == 12)
+//                            {
+//                                month = 1
+//                                year = year + 1
+//                            }
+//
+//                        },
+//                        modifier = Modifier.weight(1f),
+//                        colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent),
+//                        contentPadding = PaddingValues()
+//                    ) {
+//                        Text("->", color = Color.Black, fontSize = 20.sp, fontWeight = FontWeight.Bold)
+//                    }
+                    IconButton(onClick = {
+                        if(month<12)
+                        {
+                            month = month + 1
+                        }
+                        else if(month == 12)
+                        {
+                            month = 1
+                            year = year + 1
+                        }
 
-                        },
-                        modifier = Modifier.weight(1f),
-                        colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent),
-                        contentPadding = PaddingValues()
-                    ) {
-                        Text("->", color = Color.Black, fontSize = 20.sp, fontWeight = FontWeight.Bold)
+                    },
+                        modifier = Modifier.weight(1f),) {
+                        Image(
+                            painter = painterResource(id = R.drawable.arrowright),
+                            contentDescription = "Arrow Right",
+                            modifier = Modifier.size(24.dp)
+                        )
                     }
                 }
 
