@@ -318,7 +318,7 @@ fun CreateTask(navController: NavController)
 
                     }
                     Log.d("TaskDate",dateTask)
-                    //navController.navigate("page1")
+                    navController.navigate("page1")
                     // lưu
                 }) {
                     Icon(Icons.Default.Check, contentDescription = "Tạo nhiệm vụ", tint = Color.White)

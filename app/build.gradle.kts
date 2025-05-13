@@ -72,6 +72,9 @@ dependencies {
     implementation("androidx.room:room-ktx:$room_version")
 
 
+    implementation("com.kizitonwose.calendar:compose:2.6.2")
+
+
 
     //implementation("br.com.devsrsouza.compose.icons:{feather}:1.1.1")
     testImplementation(libs.junit)

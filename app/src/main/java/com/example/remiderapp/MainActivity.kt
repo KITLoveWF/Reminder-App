@@ -58,7 +58,7 @@ fun App()
         }
         composable("page3")
         {
-
+            WeekCalendarScreen(navController)
         }
         composable("page4") {
             CreateTask(navController)
@@ -70,9 +70,7 @@ fun App()
             UpdateTask(navController,taskId)
         }
         composable("page6") {
-
             ListFolder(navController)
-
         }
     }
 }
