@@ -6,6 +6,7 @@ import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.defaultMinSize
@@ -19,6 +20,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ArrowBack
@@ -35,6 +37,7 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.FloatingActionButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -52,6 +55,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
@@ -69,7 +75,6 @@ import com.example.remiderapp.ViewModel.TaskViewModel
 @Composable
 //@Preview(showBackground = true)
 @OptIn(ExperimentalMaterial3Api::class)
-
 fun ListTask(navController: NavController)
 {
     //navController: NavController
@@ -117,122 +122,129 @@ fun ListTask(navController: NavController)
     }
     Scaffold(
         topBar = {
-            CenterAlignedTopAppBar(
-                title = {
-                    Text("Nhắc nhở")
-                },
-                navigationIcon = {
-                    if(isOpenFooter)
-                    {
+            // Modern AppBar with gradient and rounded bottom corners
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(
+                        Brush.horizontalGradient(
+                            listOf(
+                                MaterialTheme.colorScheme.primary,
+                                MaterialTheme.colorScheme.secondary
+                            )
+                        ),
+                        shape = RoundedCornerShape(bottomStart = 28.dp, bottomEnd = 28.dp)
+                    )
+                    .shadow(4.dp, RoundedCornerShape(bottomStart = 28.dp, bottomEnd = 28.dp))
+            ) {
+                CenterAlignedTopAppBar(
+                    title = {
+                        Text(
+                            "Nhắc nhở",
+                            style = MaterialTheme.typography.titleLarge.copy(
+                                color = MaterialTheme.colorScheme.onPrimary,
+                                fontWeight = FontWeight.Bold
+                            )
+                        )
+                    },
+                    navigationIcon = {
+                        if (isOpenFooter) {
+                            IconButton(onClick = {
+                                isOpenFooter = !isOpenFooter
+                                completedTasks.forEach { task -> onUpdateTask(task) }
+                            }) {
+                                Icon(
+                                    Icons.Default.Clear,
+                                    contentDescription = "Back",
+                                    tint = MaterialTheme.colorScheme.tertiary
+                                )
+                            }
+                        }
+                    },
+                    actions = {
                         IconButton(onClick = {
                             isOpenFooter = !isOpenFooter
-                            completedTasks.forEach({
-                                    task-> onUpdateTask(task)
-                            })
-
+                            if (isOpenFooter) {
+                                pendingTasks.forEach { task -> onUpdateTask(task) }
+                            } else {
+                                completedTasks.forEach { task -> onUpdateTask(task) }
+                            }
                         }) {
-                            Icon(Icons.Default.Clear, contentDescription = "Back", tint = colorResource(id = R.color.graymain) )
+                            Icon(
+                                Icons.Default.Delete,
+                                contentDescription = "Delete",
+                                tint = MaterialTheme.colorScheme.error
+                            )
                         }
-
-                    }
-
-                },
-                actions = {
-                    IconButton(onClick = {
-                        isOpenFooter =!isOpenFooter
-                        if(isOpenFooter)
-                        {
-                            pendingTasks.forEach { task -> onUpdateTask(task)}
-                        }
-                        else{
-                            completedTasks.forEach({
-                                task-> onUpdateTask(task)
-                            })
-                        }
-                    }) {
-                        Icon(Icons.Default.Delete, contentDescription = "Delete")
-                    }
-                },
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = Color.Black, // Màu nền
-                    titleContentColor = Color.White // Màu chữ
-                ),
-            )
+                    },
+                    colors = TopAppBarDefaults.topAppBarColors(
+                        containerColor = Color.Transparent,
+                        titleContentColor = MaterialTheme.colorScheme.onPrimary
+                    ),
+                    modifier = Modifier
+                        .clip(RoundedCornerShape(bottomStart = 28.dp, bottomEnd = 28.dp))
+                )
+            }
         },
         floatingActionButton = {
+            // Modern FAB: rounded rectangle, vibrant color, shadow
             FloatingActionButton(
                 onClick = {
                     isChecked = !isChecked
                     navController.navigate("page4")
-
                 },
-                containerColor = Color(0xFF4CAF50),
-                contentColor = Color.White,
-                shape = CircleShape,
-                modifier = Modifier.navigationBarsPadding()
-
-
+                containerColor = MaterialTheme.colorScheme.tertiary,
+                contentColor = MaterialTheme.colorScheme.onTertiary,
+                shape = RoundedCornerShape(20.dp),
+                elevation = FloatingActionButtonDefaults.elevation(10.dp),
+                modifier = Modifier
+                    .navigationBarsPadding()
+                    .size(width = 64.dp, height = 56.dp)
             ) {
                 Icon(Icons.Default.Add, contentDescription = "Thêm Task")
-//                if(!isChecked)
-//                {
-//
-//
-//                }
-//                else{
-//
-//                    Icon(Icons.Default.Check, contentDescription = "Đánh dấu đã thêm")
-//
-//
-//                }
             }
-
         },
         bottomBar = {
-            if(isOpenFooter)
-            {
+            if (isOpenFooter) {
                 FooterTask(
-//                    onDelete = {
-//                        //onDeleteTask(task)
-//                        longPressedTask = null
-//                        isOpenFooter = false
-//                    }
                     completedTasks,
-//                    onMoveToCategory = {
-//                        //onMoveToCategory(task)
-//                        longPressedTask = null
-//                        isOpenFooter = false
-//                    },
                     onDimiss = {
-                        isOpenFooter =!isOpenFooter
+                        isOpenFooter = !isOpenFooter
                     }
                 )
-            }
-            else
-            {
+            } else {
                 Footer(navController)
             }
-
         }
-    ) {
-            paddingValues ->
+    ) { paddingValues ->
         Column(
-        modifier = Modifier.fillMaxSize().background(Color.Black).padding(paddingValues),
-
-    ) {
+            modifier = Modifier
+                .fillMaxSize()
+                .background(
+                    Brush.verticalGradient(
+                        listOf(
+                            MaterialTheme.colorScheme.background,
+                            MaterialTheme.colorScheme.primary.copy(alpha = 0.08f)
+                        )
+                    )
+                )
+                .padding(paddingValues)
+        ) {
+            // Search bar
             Column(modifier = Modifier.weight(2f)) {
                 TextField(
                     value = searchQuery,
                     onValueChange = { searchQuery = it },
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(8.dp),
+                        .padding(12.dp)
+                        .clip(RoundedCornerShape(24.dp)),
                     singleLine = true,
                     leadingIcon = {
                         Icon(
                             imageVector = Icons.Default.Search,
                             contentDescription = "Search",
-                            tint = Color.Gray
+                            tint = MaterialTheme.colorScheme.primary
                         )
                     },
                     trailingIcon = {
@@ -241,15 +253,15 @@ fun ListTask(navController: NavController)
                                 Icon(
                                     imageVector = Icons.Default.Close,
                                     contentDescription = "Clear",
-                                    tint = Color.Gray
+                                    tint = MaterialTheme.colorScheme.secondary
                                 )
                             }
                         }
                     },
                     colors = TextFieldDefaults.textFieldColors(
-                        containerColor = Color.DarkGray,
-                        focusedTextColor = Color.White,
-                        cursorColor = Color.Yellow,
+                        containerColor = MaterialTheme.colorScheme.surfaceVariant,
+                        focusedTextColor = MaterialTheme.colorScheme.onSurface,
+                        cursorColor = MaterialTheme.colorScheme.primary,
                         focusedIndicatorColor = Color.Transparent,
                         unfocusedIndicatorColor = Color.Transparent
                     ),
@@ -257,66 +269,83 @@ fun ListTask(navController: NavController)
                         Text(
                             text = "Tìm kiếm",
                             fontSize = 20.sp,
-                            fontWeight = FontWeight.Normal,       // placeholder thường mỏng hơn
-                            color = Color.Gray
+                            fontWeight = FontWeight.Normal,
+                            color = MaterialTheme.colorScheme.outline
                         )
                     },
+                    shape = RoundedCornerShape(24.dp)
                 )
-
             }
+
+            // Folder filter row
             Column(modifier = Modifier.weight(1f)) {
-            Row(modifier = Modifier
-                .horizontalScroll(scrollState)
-                .padding(8.dp))
-            {
-
-                Button(
-                    onClick = {
-                        isSelectFolder = -1
-                    },
+                Row(
                     modifier = Modifier
-                        .padding(end = 8.dp),
-                    colors =  ButtonDefaults.buttonColors(Color.Gray)
-
+                        .horizontalScroll(scrollState)
+                        .padding(horizontal = 12.dp, vertical = 8.dp)
                 ) {
-                    Text("All")
-                }
-
-                folders.forEach { category ->
                     Button(
-                        onClick = { isSelectFolder = category.id },
-                        modifier = Modifier
-                            .padding(end = 8.dp),
-                        colors =  ButtonDefaults.buttonColors(Color.Gray)
-
+                        onClick = { isSelectFolder = -1 },
+                        modifier = Modifier.padding(end = 8.dp),
+                        shape = RoundedCornerShape(24.dp),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = if (isSelectFolder == -1)
+                                MaterialTheme.colorScheme.primary
+                            else
+                                MaterialTheme.colorScheme.secondaryContainer,
+                            contentColor = MaterialTheme.colorScheme.onPrimary
+                        )
                     ) {
-                        Text(category.name)
+                        Text("All")
+                    }
+
+                    folders.forEach { category ->
+                        Button(
+                            onClick = { isSelectFolder = category.id },
+                            modifier = Modifier.padding(end = 8.dp),
+                            shape = RoundedCornerShape(24.dp),
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = if (isSelectFolder == category.id)
+                                    MaterialTheme.colorScheme.primary
+                                else
+                                    MaterialTheme.colorScheme.secondaryContainer,
+                                contentColor = MaterialTheme.colorScheme.onPrimary
+                            )
+                        ) {
+                            Text(category.name)
+                        }
+                    }
+                    Button(
+                        onClick = { navController.navigate("page6") },
+                        modifier = Modifier.padding(end = 8.dp),
+                        shape = RoundedCornerShape(24.dp),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = MaterialTheme.colorScheme.tertiary,
+                            contentColor = MaterialTheme.colorScheme.onTertiary
+                        )
+                    ) {
+                        Icon(
+                            painter = painterResource(id = R.drawable.folder),
+                            contentDescription = "More",
+                            modifier = Modifier.size(24.dp),
+                            tint = MaterialTheme.colorScheme.onTertiary
+                        )
                     }
                 }
-                // Nút cuối cùng chuyển sang danh sách thư mục
-                Button(
-                    onClick = {
-                        // Ví dụ nếu dùng NavController:
-                        navController.navigate("page6")
-                    },
-                    modifier = Modifier
-                        .padding(end = 8.dp),
-                    colors =  ButtonDefaults.buttonColors(Color.Gray)
+            }
 
-
+            // Task lists
+            Column(modifier = Modifier.weight(10f)) {
+                Text(
+                    "Nhiệm vụ",
+                    style = MaterialTheme.typography.titleMedium,
+                    modifier = Modifier.padding(start = 16.dp, top = 8.dp, bottom = 4.dp),
+                    color = MaterialTheme.colorScheme.primary
+                )
+                LazyColumn(
+                    contentPadding = PaddingValues(horizontal = 12.dp, vertical = 8.dp),
+                    verticalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
-                    Icon(
-                        painter = painterResource(id = R.drawable.folder), // replace with your icon
-                        contentDescription = "More",
-                        modifier = Modifier.size(24.dp),
-                        tint = Color.Yellow
-                    )
-                }
-
-            } }
-            Column (modifier = Modifier.weight(10f)){
-                Text("Nhiệm vụ", style = MaterialTheme.typography.titleMedium, modifier = Modifier.padding(8.dp), color = Color.White)
-                LazyColumn {
                     if(searchQuery=="")
                     {
                         if (isSelectFolder == -1)
@@ -361,28 +390,30 @@ fun ListTask(navController: NavController)
                     else
                     {
                         Log.d("search","${listSearchQueryPending}")
-                            items(listSearchQueryPending.size) { index ->
-                                val task = listSearchQueryPending[index]
-                                TaskRow (
-                                    task = task,
-                                    onCheckedChange = {
-                                        onUpdateTask(task)
-                                        isOpenFooter = !isOpenFooter
-                                        //longPressedTask = task
-                                    },
-                                    onClick = {
-                                        //taskViewModel.selectedTask = task
-                                        navController.navigate("page5/${task.id}")
-                                    }
-                                )
-                            }
+                        items(listSearchQueryPending.size) { index ->
+                            val task = listSearchQueryPending[index]
+                            TaskRow (
+                                task = task,
+                                onCheckedChange = {
+                                    onUpdateTask(task)
+                                    isOpenFooter = !isOpenFooter
+                                    //longPressedTask = task
+                                },
+                                onClick = {
+                                    //taskViewModel.selectedTask = task
+                                    navController.navigate("page5/${task.id}")
+                                }
+                            )
+                        }
                     }
-
-
                 }
-
                 if (completedTasks.isNotEmpty()) {
-                    Text("Đã hoàn thành", style = MaterialTheme.typography.titleMedium, modifier = Modifier.padding(8.dp), color = Color.White)
+                    Text(
+                        "Đã hoàn thành",
+                        style = MaterialTheme.typography.titleMedium,
+                        modifier = Modifier.padding(start = 16.dp, top = 8.dp, bottom = 4.dp),
+                        color = MaterialTheme.colorScheme.secondary
+                    )
                     LazyColumn {
                         if(searchQuery=="")
                         {
@@ -430,37 +461,31 @@ fun ListTask(navController: NavController)
                         else
                         {
 
-                                items(listSearchQueryComplete.size) { index ->
-                                    val task = listSearchQueryComplete[index]
-                                    TaskRow(
-                                        task = task,
-                                        onCheckedChange = {
-                                            onUpdateTask(task)
-                                            isOpenFooter = !isOpenFooter
-                                        },
+                            items(listSearchQueryComplete.size) { index ->
+                                val task = listSearchQueryComplete[index]
+                                TaskRow(
+                                    task = task,
+                                    onCheckedChange = {
+                                        onUpdateTask(task)
+                                        isOpenFooter = !isOpenFooter
+                                    },
 //                                onLongPress = {
 //                                    longPressedTask = task
 //                                },
-                                        onClick = {
-                                            taskViewModel.selectedTask = task
+                                    onClick = {
+                                        taskViewModel.selectedTask = task
 
-                                        }
-                                    )
-                                }
+                                    }
+                                )
+                            }
 
                         }
 
 
                     }
                 }
-
-
             }
-
-
-
-    }
-
+        }
 
     }
 }

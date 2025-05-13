@@ -104,16 +104,28 @@ fun CalendarHeader(
 @Composable
 fun WeekCalendarScreen(tasks: List<Task>,
                        navController: NavController,
-                       onPreviousWeek: () -> Unit = {},
-                       onNextWeek: () -> Unit = {},
                        onSwitchToMorning: () -> Unit = {},
                        onSwitchToPage2: () -> Unit = {},
 
 ) {
     val today = LocalDate.now()
-    val weekDates = remember { getWeekDates(today) }
+    var currentViewDate by remember { mutableStateOf(today) }
+    val weekDates = remember(currentViewDate) {
+        getWeekDates(currentViewDate)
+    }
     val scrollState = rememberScrollState()
     var selectedDate by remember { mutableStateOf(today) }
+
+    // Hàm chuyển đến tuần trước
+    val onPreviousWeek = {
+        currentViewDate = currentViewDate.minusWeeks(1)
+    }
+
+    // Hàm chuyển đến tuần sau
+    val onNextWeek = {
+        currentViewDate = currentViewDate.plusWeeks(1)
+    }
+
     Log.d("task","${tasks}")
     Scaffold { paddingValues ->
         Column(Modifier.fillMaxSize().padding(paddingValues)) {
