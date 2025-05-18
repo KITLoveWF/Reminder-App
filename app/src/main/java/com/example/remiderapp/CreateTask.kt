@@ -13,6 +13,7 @@ import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -23,6 +24,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.DateRange
@@ -38,6 +40,7 @@ import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Switch
 import androidx.compose.material3.SwitchDefaults
@@ -60,6 +63,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.platform.LocalContext
@@ -153,291 +159,283 @@ fun CreateTask(navController: NavController)
         //tasks = _tasks
     }
 
-    Scaffold(topBar = {
-        TopAppBar(
-            title = {
-                Text("Set Task")
-            },
-            colors = TopAppBarDefaults.topAppBarColors(
-                containerColor = Color.Black, // Màu nền
-                titleContentColor = Color.White // Màu chữ
-            ),
-            navigationIcon = {
-                IconButton(onClick = {
-                    navController.navigate("page1")
-                }) {
-                    //Icon(Icons.Default.ArrowBack, contentDescription = "Back")
-                    Icon(
-                        painter = painterResource(id = R.drawable.arrow), // replace with your icon
-                        contentDescription = "Button Icon",
-                        modifier = Modifier.size(16.dp),
-                        tint = Color.White
-                    )
-                }
-            },
-            actions = {
-                IconButton(onClick = {
-                    expnadedPriority =! expnadedPriority
-
-
-                }) {
-                    Icon(Icons.Default.Menu, contentDescription = "Độ ưu tin", tint = Color.White)
-                }
-
-                DropdownMenu(
-                    expanded = expnadedPriority,
-                    onDismissRequest = { expnadedPriority = false }
-                ) {
-                    DropdownMenuItem(
-                        text = { Text("Priority 1") },
-                        leadingIcon = {
-                            Icon(
-                                painter = painterResource(id = R.drawable.priority_1), // replace with your icon
-                                contentDescription = "Button Icon",
-                                modifier = Modifier.size(16.dp),
-                                tint = Color.Red
+    Scaffold(
+        topBar = {
+            // Modern, colorful, rounded AppBar
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(
+                        brush = Brush.horizontalGradient(
+                            colors = listOf(
+                                MaterialTheme.colorScheme.primary,
+                                MaterialTheme.colorScheme.secondary
                             )
-                        },
-                        onClick = {
-                        /* Do something... */
-                            priority = 1
-                            expnadedPriority =! expnadedPriority
-                        }
+                        ),
+                        shape = RoundedCornerShape(bottomStart = 24.dp, bottomEnd = 24.dp)
                     )
-                    DropdownMenuItem(
-                        text = { Text("Priority 2") },
-                        leadingIcon = {
-                            Icon(
-                                painter = painterResource(id = R.drawable.priority_2), // replace with your icon
-                                contentDescription = "Button Icon",
-                                modifier = Modifier.size(16.dp),
-                                tint = Color.Yellow
-
+                    .shadow(4.dp, RoundedCornerShape(bottomStart = 24.dp, bottomEnd = 24.dp))
+            ) {
+                TopAppBar(
+                    title = {
+                        Text(
+                            "Set Task",
+                            style = MaterialTheme.typography.titleLarge.copy(
+                                color = MaterialTheme.colorScheme.onPrimary,
+                                fontWeight = FontWeight.Bold
                             )
-                        },
-                        onClick = { /* Do something... */
-                            priority = 2
-                            expnadedPriority =! expnadedPriority
-                        }
-                    )
-                    DropdownMenuItem(
-                        text = { Text("Priority 3") },
-                        leadingIcon = {
+                        )
+                    },
+                    colors = TopAppBarDefaults.topAppBarColors(
+                        containerColor = Color.Transparent,
+                        titleContentColor = MaterialTheme.colorScheme.onPrimary
+                    ),
+                    navigationIcon = {
+                        IconButton(onClick = {
+                            navController.navigate("page1")
+                        }) {
                             Icon(
-                                painter = painterResource(id = R.drawable.priority_3), // replace with your icon
-                                contentDescription = "Button Icon",
-                                modifier = Modifier.size(16.dp),
-                                tint = Color.Blue
-
+                                painter = painterResource(id = R.drawable.arrow),
+                                contentDescription = "Back",
+                                modifier = Modifier.size(24.dp),
+                                tint = MaterialTheme.colorScheme.onPrimary
                             )
-                        },
-                        onClick = { /* Do something... */
-                            priority = 3
-                            expnadedPriority =! expnadedPriority
                         }
-                    )
-                }
-
-
-                IconButton(onClick = {
-                    isOpenSetTime =!isOpenSetTime
-                }) {
-                    Icon(Icons.Default.DateRange, contentDescription = "Cài đặt thời gian", tint = Color.White)
-                }
-                IconButton(onClick = {
-                    if(selectedCategory!=-1)
-                    {
-                        if(title == "" && content == "" && timeTask=="" && dateTask=="")
-                        {
-                            Toast.makeText(context, "Nhập thiếu thông tin", Toast.LENGTH_SHORT).show()
-                        }
-                        else
-                        {
-                            val task = Task(0,title,content,timeTask,dateTask,cancelTime,priority,false,selectedCategory)
-                            taskViewModel.addTask(task)
-                            //val _tasks = taskViewModel.getTask().observeAsState(emptyList())
-                            //val tasks = _tasks.value
-                            taskAdded = true
-//                            if(tasks.isNotEmpty())
-//                            {
-//                                Log.d("llllkkpp","$tasks")
-//
-//                            }
-//                            else
-//                            {
-//                                Log.d("rỗng","cc")
-//                            }
-
-                            //Log.d("Timekkkk", "year=$year, month=$month, day=$day, hour=$hour, minute=$minute, title=$title, content=$content,cancle=$cancelTime")
-//                            if(cancelTime)
-//                            {
-//                                setTime(context = context,year,month,day,hour,minute,title,content)
-//                            }
-//                            else
-//                            {
-//                                cancelNotification(context)
-//                            }
-
-
+                    },
+                    actions = {
+                        IconButton(onClick = {
+                            expnadedPriority = !expnadedPriority
+                        }) {
+                            Icon(
+                                Icons.Default.Menu,
+                                contentDescription = "Độ ưu tiên",
+                                tint = MaterialTheme.colorScheme.onPrimary
+                            )
                         }
 
-                    }
-                    else
-                    {
-                        if(title == "" && content == "" && timeTask=="" && dateTask=="")
-                        {
-                            Toast.makeText(context, "Nhập thiếu thông tin", Toast.LENGTH_SHORT).show()
+                        DropdownMenu(
+                            expanded = expnadedPriority,
+                            onDismissRequest = { expnadedPriority = false }
+                        ) {
+                            DropdownMenuItem(
+                                text = { Text("Priority 1", color = MaterialTheme.colorScheme.primary) },
+                                leadingIcon = {
+                                    Icon(
+                                        painter = painterResource(id = R.drawable.priority_1),
+                                        contentDescription = "Priority 1",
+                                        modifier = Modifier.size(20.dp),
+                                        tint = MaterialTheme.colorScheme.primary
+                                    )
+                                },
+                                onClick = {
+                                    priority = 1
+                                    expnadedPriority = !expnadedPriority
+                                }
+                            )
+                            DropdownMenuItem(
+                                text = { Text("Priority 2", color = MaterialTheme.colorScheme.tertiary) },
+                                leadingIcon = {
+                                    Icon(
+                                        painter = painterResource(id = R.drawable.priority_2),
+                                        contentDescription = "Priority 2",
+                                        modifier = Modifier.size(20.dp),
+                                        tint = MaterialTheme.colorScheme.tertiary
+                                    )
+                                },
+                                onClick = {
+                                    priority = 2
+                                    expnadedPriority = !expnadedPriority
+                                }
+                            )
+                            DropdownMenuItem(
+                                text = { Text("Priority 3", color = MaterialTheme.colorScheme.secondary) },
+                                leadingIcon = {
+                                    Icon(
+                                        painter = painterResource(id = R.drawable.priority_3),
+                                        contentDescription = "Priority 3",
+                                        modifier = Modifier.size(20.dp),
+                                        tint = MaterialTheme.colorScheme.secondary
+                                    )
+                                },
+                                onClick = {
+                                    priority = 3
+                                    expnadedPriority = !expnadedPriority
+                                }
+                            )
                         }
-                        else
-                        {
-                            val task = Task(0,title,content,timeTask,dateTask,cancelTime,priority,false)
-                            taskViewModel.addTask(task)
-                            //val _tasks = taskViewModel.getTask().observeAsState(emptyList())
-                            //val tasks = _tasks.value
-                           taskAdded = true
-//                            if(tasks.isNotEmpty())
-//                            {
-//                                Log.d("llllkkpp","$tasks")
-//
-//                            }
-//                            else
-//                            {
-//                                Log.d("rỗng","cc")
-//                            }
-                            //Log.d("Timekkkk", "year=$year, month=$month, day=$day, hour=$hour, minute=$minute, title=$title, content=$content,cancle=$cancelTime")
-//                            if(cancelTime)
-//                            {
-//                                setTime(context = context,year,month,day,hour,minute,title,content)
-//                            }
-//                            else
-//                            {
-//                                cancelNotification(context)
-//                            }
 
+                        IconButton(onClick = {
+                            isOpenSetTime = !isOpenSetTime
+                        }) {
+                            Icon(
+                                Icons.Default.DateRange,
+                                contentDescription = "Cài đặt thời gian",
+                                tint = MaterialTheme.colorScheme.onPrimary
+                            )
                         }
-
-                    }
-                    Log.d("TaskDate",dateTask)
-                    navController.navigate("page1")
-                    // lưu
-                }) {
-                    Icon(Icons.Default.Check, contentDescription = "Tạo nhiệm vụ", tint = Color.White)
-                }
-            }
-
-
-        )
-
-    }) { paddingValues ->
-        Column(modifier = Modifier
-            .padding(paddingValues)
-            .background(Color.Black)
-            .fillMaxSize()){
-            Column(modifier = Modifier.weight(1f)) {
-                Row(modifier = Modifier
-                    .horizontalScroll(scrollState)
-                    .padding(8.dp)
+                        IconButton(onClick = {
+                            if (selectedCategory != -1) {
+                                if (title == "" && content == "" && timeTask == "" && dateTask == "") {
+                                    Toast.makeText(context, "Nhập thiếu thông tin", Toast.LENGTH_SHORT).show()
+                                } else {
+                                    val task = Task(0, title, content, timeTask, dateTask, cancelTime, priority, false, selectedCategory)
+                                    taskViewModel.addTask(task)
+                                    taskAdded = true
+                                }
+                            } else {
+                                if (title == "" && content == "" && timeTask == "" && dateTask == "") {
+                                    Toast.makeText(context, "Nhập thiếu thông tin", Toast.LENGTH_SHORT).show()
+                                } else {
+                                    val task = Task(0, title, content, timeTask, dateTask, cancelTime, priority, false)
+                                    taskViewModel.addTask(task)
+                                    taskAdded = true
+                                }
+                            }
+                            Log.d("TaskDate", dateTask)
+                            navController.navigate("page1")
+                        }) {
+                            Icon(
+                                Icons.Default.Check,
+                                contentDescription = "Tạo nhiệm vụ",
+                                tint = MaterialTheme.colorScheme.onPrimary
+                            )
+                        }
+                    },
+                    modifier = Modifier
+                        .clip(RoundedCornerShape(bottomStart = 24.dp, bottomEnd = 24.dp))
                 )
-
-                {
-
+            }
+        }
+    )
+    { paddingValues ->
+        Column(
+            modifier = Modifier
+                .padding(paddingValues)
+                .background(MaterialTheme.colorScheme.background)
+                .fillMaxSize()
+        ) {
+            // Category Buttons Row
+            Column(modifier = Modifier.weight(1f)) {
+                Row(
+                    modifier = Modifier
+                        .horizontalScroll(scrollState)
+                        .padding(8.dp)
+                ) {
                     Button(
                         onClick = { /* TODO: xử lý từng loại */ },
-                        modifier = Modifier
-                            .padding(end = 8.dp),
-                        colors =  ButtonDefaults.buttonColors(Color.Gray)
-
+                        modifier = Modifier.padding(end = 8.dp),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = MaterialTheme.colorScheme.primaryContainer,
+                            contentColor = MaterialTheme.colorScheme.onPrimaryContainer
+                        ),
+                        shape = RoundedCornerShape(24.dp),
+                        elevation = ButtonDefaults.buttonElevation(4.dp)
                     ) {
                         Text("All")
                     }
-
                     folders.forEach { category ->
                         Button(
                             onClick = {
                                 selectedCategory = category.id
-                                Toast.makeText(context, "Đã chọn danh mục ${category.name} thành công!", Toast.LENGTH_SHORT).show()
-                                      },
-                            modifier = Modifier
-                                .padding(end = 8.dp),
-                            colors =  ButtonDefaults.buttonColors(Color.Gray)
-
+                                Toast.makeText(
+                                    context,
+                                    "Đã chọn danh mục ${category.name} thành công!",
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                            },
+                            modifier = Modifier.padding(end = 8.dp),
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = if (selectedCategory == category.id)
+                                    MaterialTheme.colorScheme.secondaryContainer
+                                else
+                                    MaterialTheme.colorScheme.primaryContainer,
+                                contentColor = MaterialTheme.colorScheme.onPrimaryContainer
+                            ),
+                            shape = RoundedCornerShape(24.dp),
+                            elevation = ButtonDefaults.buttonElevation(4.dp)
                         ) {
                             Text(category.name)
                         }
                     }
                 }
-
-
             }
+
+            // Title TextField
             Column(modifier = Modifier.weight(1f)) {
                 TextField(
                     value = title,
                     onValueChange = { title = it },
                     modifier = Modifier
                         .fillMaxWidth()
-                        .weight(1f),
-                    colors = TextFieldDefaults.textFieldColors(
-                        containerColor = Color.Black,
-                        focusedTextColor = Color.White,
-                        cursorColor = Color.Yellow,
-                        unfocusedTextColor = Color.Gray,
-                                   // màu placeholder
+                        .padding(horizontal = 8.dp)
+                        .clip(RoundedCornerShape(16.dp)),
+                    colors = TextFieldDefaults.colors(
+                        focusedTextColor = MaterialTheme.colorScheme.onSurface,
+                        unfocusedTextColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                        focusedContainerColor = MaterialTheme.colorScheme.surface,
+                        unfocusedContainerColor = MaterialTheme.colorScheme.surfaceVariant,
+                        cursorColor = MaterialTheme.colorScheme.primary,
+                        focusedIndicatorColor = MaterialTheme.colorScheme.primary,
+                        unfocusedIndicatorColor = MaterialTheme.colorScheme.outline
                     ),
                     textStyle = TextStyle(
                         fontSize = 20.sp,
-                        fontWeight = FontWeight.Bold             // độ đậm
+                        fontWeight = FontWeight.Bold
                     ),
                     placeholder = {
                         Text(
                             text = "Tiêu đề",
                             fontSize = 20.sp,
-                            fontWeight = FontWeight.Normal,       // placeholder thường mỏng hơn
-                            color = Color.Gray
+                            fontWeight = FontWeight.Normal,
+                            color = MaterialTheme.colorScheme.outline
                         )
                     },
-                    shape = RectangleShape,
+                    shape = RoundedCornerShape(16.dp),
                     singleLine = false,
                     maxLines = 5
                 )
-
             }
+
+            // Content TextField
             Column(modifier = Modifier.weight(11f)) {
                 TextField(
                     value = content,
                     onValueChange = { content = it },
                     modifier = Modifier
                         .fillMaxWidth()
-                        .weight(1f),
-                    colors = TextFieldDefaults.textFieldColors(
-                        containerColor = Color.Black,
-                        focusedTextColor = Color.White,
-                        cursorColor = Color.Yellow,
-                        unfocusedTextColor = Color.Gray,
-
-                        // màu placeholder
+                        .padding(horizontal = 8.dp)
+                        .clip(RoundedCornerShape(16.dp)),
+                    colors = TextFieldDefaults.colors(
+                        focusedTextColor = MaterialTheme.colorScheme.onSurface,
+                        unfocusedTextColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                        focusedContainerColor = MaterialTheme.colorScheme.surface,
+                        unfocusedContainerColor = MaterialTheme.colorScheme.surfaceVariant,
+                        cursorColor = MaterialTheme.colorScheme.primary,
+                        focusedIndicatorColor = MaterialTheme.colorScheme.primary,
+                        unfocusedIndicatorColor = MaterialTheme.colorScheme.outline
                     ),
                     textStyle = TextStyle(
                         fontSize = 16.sp,
-                        fontWeight = FontWeight.Bold             // độ đậm
+                        fontWeight = FontWeight.Bold
                     ),
                     placeholder = {
                         Text(
                             text = "Bắt đầu soạn",
                             fontSize = 16.sp,
-                            fontWeight = FontWeight.Normal,       // placeholder thường mỏng hơn
-                            color = Color.Gray
+                            fontWeight = FontWeight.Normal,
+                            color = MaterialTheme.colorScheme.outline
                         )
                     },
-                    shape = RectangleShape,
+                    shape = RoundedCornerShape(16.dp),
                     singleLine = false,
                     maxLines = Int.MAX_VALUE
                 )
-
             }
+
+            // Time Picker Dialog
             InputValue(
                 showDialog = isOpenSetTime,
-                onConfirm = {
-                        date,time,Day,Month,Year,Hour,Minute ->
+                onConfirm = { date, time, Day, Month, Year, Hour, Minute ->
                     dateTask = date
                     timeTask = time
                     day = Day
@@ -448,14 +446,12 @@ fun CreateTask(navController: NavController)
                 },
                 onDismiss = {
                     isOpenSetTime = false
-
                 },
                 title = title,
                 content = content,
                 cancelTime = cancelTime,
                 onCancelTimeChange = { cancelTime = it }
             )
-
         }
     }
 

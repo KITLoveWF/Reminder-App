@@ -5,6 +5,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -27,6 +28,7 @@ import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
@@ -41,6 +43,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.res.colorResource
@@ -52,6 +57,7 @@ import androidx.navigation.NavController
 import com.example.remiderapp.Model.Category
 import com.example.remiderapp.ViewModel.CategoryViewModel
 import com.example.remiderapp.ViewModel.TaskViewModel
+import androidx.compose.ui.text.font.FontWeight
 
 @Composable
 //@Preview(showBackground = true)
@@ -88,54 +94,81 @@ fun ListFolder(navController:NavController)
 //    }
     Scaffold(
         topBar = {
-            CenterAlignedTopAppBar(
-                title = { Text("Thư mục") },
-                navigationIcon = {
-                    IconButton(onClick = {
-                        navController.navigate("page1")
-
-                    }) {
-                        Icon(Icons.Default.ArrowBack, contentDescription = "Back", tint = colorResource(id = R.color.graymain) )
-                    }
-                },
-                actions = {
-                    IconButton(onClick = {
-                        isOpenFooter =!isOpenFooter
-                        if(isOpenFooter)
-                        {
-                            folders.forEach { category ->selectedIndex.add(category)}
+            // Modern, colorful, rounded AppBar
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(
+                        brush = Brush.horizontalGradient(
+                            colors = listOf(
+                                MaterialTheme.colorScheme.primary,
+                                MaterialTheme.colorScheme.secondary
+                            )
+                        ),
+                        shape = RoundedCornerShape(bottomStart = 24.dp, bottomEnd = 24.dp)
+                    )
+                    .shadow(4.dp, RoundedCornerShape(bottomStart = 24.dp, bottomEnd = 24.dp))
+            ) {
+                CenterAlignedTopAppBar(
+                    title = {
+                        Text(
+                            "Thư mục",
+                            style = MaterialTheme.typography.titleLarge.copy(
+                                color = MaterialTheme.colorScheme.onPrimary,
+                                fontWeight = FontWeight.Bold
+                            )
+                        )
+                    },
+                    navigationIcon = {
+                        IconButton(onClick = {
+                            navController.navigate("page1")
+                        }) {
+                            Icon(
+                                Icons.Default.ArrowBack,
+                                contentDescription = "Back",
+                                tint = MaterialTheme.colorScheme.onPrimary
+                            )
                         }
-                        else{
-                            selectedIndex.clear()
+                    },
+                    actions = {
+                        IconButton(onClick = {
+                            isOpenFooter = !isOpenFooter
+                            if (isOpenFooter) {
+                                folders.forEach { category -> selectedIndex.add(category) }
+                            } else {
+                                selectedIndex.clear()
+                            }
+                        }) {
+                            Icon(
+                                Icons.Default.Delete,
+                                contentDescription = "Delete",
+                                tint = MaterialTheme.colorScheme.onPrimary
+                            )
                         }
-                    }) {
-                        Icon(Icons.Default.Delete, contentDescription = "Delete")
-                    }
-                },
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = Color.Black, // Màu nền
-                    titleContentColor = Color.White // Màu chữ
-                ),
-
-//                backgroundColor = Color.Black,
-//                contentColor = Color.White
-            )
+                    },
+                    colors = TopAppBarDefaults.topAppBarColors(
+                        containerColor = Color.Transparent,
+                        titleContentColor = MaterialTheme.colorScheme.onPrimary
+                    ),
+                    modifier = Modifier
+                        .clip(RoundedCornerShape(bottomStart = 24.dp, bottomEnd = 24.dp))
+                )
+            }
         },
 
-        containerColor = Color.Black,
+        containerColor = MaterialTheme.colorScheme.background,
         bottomBar = {
-            if(isOpenFooter)
-            {
+            if (isOpenFooter) {
                 FooterFolder(selectedIndex)
             }
-
         }
-    ) { innerPadding ->
+    )
+    { innerPadding ->
         Column(
             modifier = Modifier
                 .padding(innerPadding)
                 .fillMaxSize()
-                .background(Color.Black)
+                .background(MaterialTheme.colorScheme.background)
                 .verticalScroll(scrollState)
         ) {
             folders.forEach { category ->
@@ -143,12 +176,12 @@ fun ListFolder(navController:NavController)
                 Card(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(8.dp)
+                        .padding(horizontal = 12.dp, vertical = 6.dp)
                         .pointerInput(Unit) {
                             detectTapGestures(
                                 onLongPress = {
-                                        isOpenFooter = true
-                                        selectedIndex.add(category)
+                                    isOpenFooter = true
+                                    if (!selectedIndex.contains(category)) selectedIndex.add(category)
                                 },
                                 onTap = {
                                     isOpenFooter = false
@@ -156,9 +189,14 @@ fun ListFolder(navController:NavController)
                                 },
                             )
                         },
-
-                    shape = RoundedCornerShape(12.dp),
-                    colors = CardDefaults.cardColors(Color(0xFF2C2C2C)),
+                    shape = RoundedCornerShape(16.dp),
+                    elevation = CardDefaults.cardElevation(4.dp),
+                    colors = CardDefaults.cardColors(
+                        containerColor = if (isSelected)
+                            MaterialTheme.colorScheme.secondaryContainer
+                        else
+                            MaterialTheme.colorScheme.surface
+                    ),
                 ) {
                     Row(
                         modifier = Modifier
@@ -169,7 +207,7 @@ fun ListFolder(navController:NavController)
                             Icon(
                                 imageVector = Icons.Default.Check,
                                 contentDescription = "Selected",
-                                tint = Color(0xFFFFC107),
+                                tint = MaterialTheme.colorScheme.primary,
                                 modifier = Modifier.padding(end = 12.dp)
                             )
                         } else {
@@ -177,54 +215,53 @@ fun ListFolder(navController:NavController)
                         }
                         Text(
                             text = category.name,
-                            color = Color.White,
+                            color = MaterialTheme.colorScheme.onSurface,
+                            fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal,
                             modifier = Modifier.weight(1f)
                         )
-//                        Text(
-//                            text = count.toString(),
-//                            color = Color.Gray
-//                        )
                     }
                 }
             }
 
-            // Thư mục mới
+            // Thư mục mới (New Folder)
             Card(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(8.dp)
+                    .padding(horizontal = 12.dp, vertical = 10.dp)
+                    .clip(RoundedCornerShape(16.dp))
                     .clickable {
-                        isOpenCreateFolder =!isOpenCreateFolder
-
+                        isOpenCreateFolder = !isOpenCreateFolder
                     },
-                colors = CardDefaults.cardColors(Color(0xFF2C2C2C)),
-                shape = RoundedCornerShape(12.dp)
+                colors = CardDefaults.cardColors(
+                    containerColor = MaterialTheme.colorScheme.primaryContainer
+                ),
+                elevation = CardDefaults.cardElevation(4.dp),
+                shape = RoundedCornerShape(16.dp)
             ) {
                 Row(
-                    modifier = Modifier.padding(16.dp).fillMaxWidth(1f),
+                    modifier = Modifier
+                        .padding(16.dp)
+                        .fillMaxWidth(),
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.Center
                 ) {
-                    Column(
-                        horizontalAlignment = Alignment.CenterHorizontally
-                    ){
-                        Icon(
-                            painter = painterResource(id = R.drawable.addfolder),
-                            contentDescription = "Add Folder",
-                            modifier = Modifier.padding(end = 8.dp).size(24.dp),
-                            tint = Color.Unspecified
-                        )
-                        Spacer(modifier = Modifier.width(8.dp))
-                        Text("Thư mục mới", color = Color.White)
-
-                    }
-
+                    Icon(
+                        painter = painterResource(id = R.drawable.addfolder),
+                        contentDescription = "Add Folder",
+                        modifier = Modifier.size(24.dp).padding(end = 8.dp),
+                        tint = MaterialTheme.colorScheme.primary
+                    )
+                    Text(
+                        "Thư mục mới",
+                        color = MaterialTheme.colorScheme.primary,
+                        fontWeight = FontWeight.Bold
+                    )
                 }
             }
         }
     }
     CreateFolder(
-        onDimiss = {
+        onDismiss = {
             isOpenCreateFolder = false
         },
         Save = {
